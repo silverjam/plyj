@@ -1,3 +1,6 @@
+import types
+import collections
+
 # Base node
 class SourceElement(object):
     '''
@@ -23,6 +26,22 @@ class SourceElement(object):
 
     def __ne__(self, other):
         return not self == other
+
+    def toJson(self):
+
+        def _toJson(o):
+            if hasattr(o, 'toJson'):
+                return o.toJson()
+            else:
+                if isinstance(o, collections.Iterable) and not isinstance(o, types.StringTypes):
+                    return [ _toJson(element) for element in o ]
+                else:
+                    return o
+
+        fields = dict((k, _toJson(getattr(self, k))) for k in self._fields)
+
+        return { 'p_type'    : self.__class__.__name__,
+                 'p_fields'  : fields }
 
     def accept(self, visitor):
         """
