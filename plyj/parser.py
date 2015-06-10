@@ -23,7 +23,6 @@ class MyLexer(object):
         'NUM',
         'CHAR_LITERAL',
         'STRING_LITERAL',
-        'LINE_COMMENT', 'BLOCK_COMMENT',
 
         'OR', 'AND',
         'EQ', 'NEQ', 'GTEQ', 'LTEQ',
@@ -44,6 +43,8 @@ class MyLexer(object):
     t_STRING_LITERAL = r'\"([^\\\n]|(\\.))*?\"'
 
     t_ignore_LINE_COMMENT = '//.*'
+
+    #'LINE_COMMENT', 'BLOCK_COMMENT',
 
     def t_BLOCK_COMMENT(self, t):
         r'/\*(.|\n)*?\*/'
@@ -1538,14 +1539,14 @@ class ClassParser(object):
             p[0] = MethodDeclaration(p[1]['name'], parameters=p[1]['parameters'],
                                      extended_dims=p[1]['extended_dims'], type_parameters=p[1]['type_parameters'],
                                      return_type=p[1]['type'], modifiers=p[1]['modifiers'],
-                                     throws=p[1]['throws'], body=p[2])
+                                     throws=p[1]['throws'], body=p[2], lineno=p.slice[0].lineno)
 
     def p_abstract_method_declaration(self, p):
         '''abstract_method_declaration : method_header ';' '''
         p[0] = MethodDeclaration(p[1]['name'], abstract=True, parameters=p[1]['parameters'],
                                  extended_dims=p[1]['extended_dims'], type_parameters=p[1]['type_parameters'],
                                  return_type=p[1]['type'], modifiers=p[1]['modifiers'],
-                                 throws=p[1]['throws'])
+                                 throws=p[1]['throws'], lineno=p.slice[0].lineno)
 
     def p_method_header(self, p):
         '''method_header : method_header_name formal_parameter_list_opt ')' method_header_extended_dims method_header_throws_clause_opt'''
@@ -2028,7 +2029,7 @@ class Parser(object):
 
     def parse_string(self, code, debug=0, lineno=1, prefix='++'):
         self.lexer.lineno = lineno
-        return self.parser.parse(prefix + code, lexer=self.lexer, debug=debug)
+        return self.parser.parse(prefix + code, lexer=self.lexer, debug=debug, tracking=True)
 
     def parse_file(self, _file, debug=0):
         if type(_file) == str:

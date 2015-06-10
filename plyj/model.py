@@ -165,11 +165,11 @@ class MethodDeclaration(SourceElement):
 
     def __init__(self, name, modifiers=None, type_parameters=None,
                  parameters=None, return_type='void', body=None, abstract=False,
-                 extended_dims=0, throws=None):
+                 extended_dims=0, throws=None, lineno=None):
         super(MethodDeclaration, self).__init__()
         self._fields = ['name', 'modifiers', 'type_parameters', 'parameters',
                         'return_type', 'body', 'abstract', 'extended_dims',
-                        'throws']
+                        'throws', 'lineno']
         if modifiers is None:
             modifiers = []
         if type_parameters is None:
@@ -185,6 +185,7 @@ class MethodDeclaration(SourceElement):
         self.abstract = abstract
         self.extended_dims = extended_dims
         self.throws = throws
+        self.lineno = lineno
 
 class FormalParameter(SourceElement):
 
