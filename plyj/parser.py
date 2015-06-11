@@ -2004,9 +2004,12 @@ class MyParser(ExpressionParser, NameParser, LiteralParser, TypeParser, ClassPar
 
 class Parser(object):
 
-    def __init__(self):
+    def __init__(self, outputdir=None):
         self.lexer = lex.lex(module=MyLexer(), optimize=1)
-        self.parser = yacc.yacc(module=MyParser(), start='goal', optimize=1)
+        if outputdir is not None:
+            self.parser = yacc.yacc(module=MyParser(), start='goal', optimize=1, outputdir=outputdir)
+        else:
+            self.parser = yacc.yacc(module=MyParser(), start='goal', optimize=1)
 
     def tokenize_string(self, code):
         self.lexer.input(code)
